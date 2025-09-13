@@ -23,6 +23,37 @@ export default function ChatScreen({ navigation }) {
     }
   }, [messages]);
 
+  // Function to detect map-related keywords and extract location
+  const detectMapRequest = (text) => {
+    const mapKeywords = ['map', 'show me', 'location', 'where is', 'navigate', 'directions'];
+    const lowerText = text.toLowerCase();
+    
+    // Check if message contains map keywords
+    const hasMapKeyword = mapKeywords.some(keyword => lowerText.includes(keyword));
+    
+    if (hasMapKeyword) {
+      // Simple location extraction (you can make this more sophisticated)
+      // Look for common place patterns
+      const locationPatterns = [
+        /(?:show me|where is|map of|navigate to)\s+(.+?)(?:\s|$)/i,
+        /(.+?)\s+(?:on|in)\s+(?:the\s+)?map/i,
+        /location of\s+(.+)/i
+      ];
+      
+      for (let pattern of locationPatterns) {
+        const match = text.match(pattern);
+        if (match && match[1]) {
+          return match[1].trim();
+        }
+      }
+      
+      // If no specific pattern, return the whole message minus map keywords
+      return text.replace(/\b(map|show me|location|where is|navigate|directions)\b/gi, '').trim();
+    }
+    
+    return null;
+  };
+
   const handleSend = () => {
     if (!message.trim()) return;
 
@@ -30,6 +61,9 @@ export default function ChatScreen({ navigation }) {
     if (showPrompt) {
       setShowPrompt(false);
     }
+
+    // Check if this is a map request
+    const locationQuery = detectMapRequest(message);
 
     // Add user message
     const userMessage = {
@@ -40,22 +74,40 @@ export default function ChatScreen({ navigation }) {
 
     setMessages(prevMessages => [...prevMessages, userMessage]);
 
-    // Simulate other person responding with the same message
-    setTimeout(() => {
-      const responseMessage = {
-        id: (Date.now() + 1).toString(),
-        text: message, // Echo the same message back
-        isUser: false,
-      };
-      setMessages(prevMessages => [...prevMessages, responseMessage]);
-    }, 1000); // 1 second delay for response
+    // If it's a map request, navigate to map with location data
+    if (locationQuery) {
+      setTimeout(() => {
+        const responseMessage = {
+          id: (Date.now() + 1).toString(),
+          text: `Sure! Let me show you ${locationQuery} on the map.`,
+          isUser: false,
+        };
+        setMessages(prevMessages => [...prevMessages, responseMessage]);
+        
+        // Navigate to map with location data after a short delay
+        setTimeout(() => {
+          navigation.navigate('Map', { 
+            locationQuery: locationQuery,
+            userMessage: message 
+          });
+        }, 1500);
+      }, 1000);
+    } else {
+      // Simulate other person responding with the same message
+      setTimeout(() => {
+        const responseMessage = {
+          id: (Date.now() + 1).toString(),
+          text: message, // Echo the same message back
+          isUser: false,
+        };
+        setMessages(prevMessages => [...prevMessages, responseMessage]);
+      }, 1000);
+    }
 
     // Clear input
     setMessage('');
 
     console.log('User typed:', message);
-    // Note: Remove or modify this navigation if you want to stay in chat
-    // navigation.navigate('Map');
   };
 
   const renderMessage = ({ item }) => (
@@ -79,7 +131,7 @@ export default function ChatScreen({ navigation }) {
     >
       {showPrompt ? (
         <View style={styles.promptContainer}>
-          <Text style={styles.prompt}>Looking for restaurants?...</Text>
+          <Text style={styles.prompt}>Howdy! What's on your mind...</Text>
         </View>
       ) : (
         <FlatList
