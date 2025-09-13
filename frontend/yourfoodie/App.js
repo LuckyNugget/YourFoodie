@@ -1,22 +1,18 @@
-import React, { useRef } from 'react';
-import { View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ChatScreen from './screen/ChatScreen';
+import MapScreen from './screen/MapScreen';
 
-export default function MapScreen() {
-  const mapRef = useRef(null);
+const Stack = createNativeStackNavigator();
 
-  return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        ref={mapRef}
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
-    </View>
-  );
+export default function App(){
+    return(
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Chat">
+                <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Map" component={MapScreen} options={{ title: 'Map' }} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
 }
