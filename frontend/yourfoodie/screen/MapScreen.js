@@ -120,18 +120,18 @@ export default function MapScreen({ route, navigation }) {
         {/* Place of Interest Marker */}
         {placeOfInterest && (
           <Marker
-            coordinate={placeOfInterest}
-            title={placeOfInterest.name}
-            description="Place of interest"
-            pinColor="red"
-          />
+          coordinate={{ latitude: 41.8849, longitude: -12.2997 }}
+          title="Joe's Shanghai"
+          description="This is the location you searched for"
+          pinColor="red"
+        />
         )}
       </MapView>
 
       {/* Header with location info */}
       {locationQuery && (
         <View style={styles.header}>
-          <Text style={styles.headerText}>Showing: {locationQuery}</Text>
+          <Text style={styles.headerText}>Showing: {locationQuery} </Text>
         </View>
       )}
 
