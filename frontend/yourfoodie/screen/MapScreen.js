@@ -10,7 +10,7 @@ export default function MapScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   
   // Get the location query from navigation params
-  const { locationQuery, userMessage } = route.params || {};
+  const { locationQuery = null, userMessage = "" } = route.params || {};
 
   useEffect(() => {
     getUserLocation();
