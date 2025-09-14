@@ -271,7 +271,7 @@ export default function ChatScreen({ navigation }) {
     return (
       <View style={[styles.messageContainer, styles.otherMessage]}>
         <View style={styles.typingContainer}>
-          <Text style={styles.typingText}>Claude is typing</Text>
+          <Text style={styles.typingText}>Thinking... </Text>
           <ActivityIndicator size="small" color="#666" style={styles.typingIndicator} />
         </View>
       </View>
@@ -294,7 +294,7 @@ export default function ChatScreen({ navigation }) {
     >
       {showPrompt ? (
         <View style={styles.promptContainer}>
-          <Text style={styles.prompt}>Connecting to Claude...</Text>
+          <Text style={styles.prompt}>Loading...</Text>
         </View>
       ) : (
         <FlatList
